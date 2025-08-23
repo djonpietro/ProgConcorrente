@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <pthread.h>
 #include <math.h>
+#include "timer.h"
 
 #define TOL 1e-3
 
@@ -34,6 +35,7 @@ void * produto_interno(void *args) {
   pthread_exit((void*) soma);
 }
 
+
 int main(int argc, char *argv[]) {
   // Declaracao de variaveis
   FILE      *fp;                    // stream para o arquivo de dados
@@ -42,7 +44,9 @@ int main(int argc, char *argv[]) {
             fatia;                  // qtde de elementos a serem percorridos pela thread
   double    resultado_teste,        // resultado lido do arquivo de teste
             soma = 0,               // produto interno computado pelo programa
-            *resultado_thread;      // ponteiro para o resultado do valor calculado pela thread
+            *resultado_thread,      // ponteiro para o resultado do valor calculado pela thread
+            erro_relativo,          // erro relativo do caso de teste
+            start, finish, elapsed; // vars para regisro de tempo
   short int nthreads;               // qtde de threads
   int       id_teste = 1,           // indice do caso de teste
             qtde_testes_falhos = 0; // quantos testes falharam
@@ -66,10 +70,11 @@ int main(int argc, char *argv[]) {
 
   // ler dimensao do caso de teste
   while ( (c = fread(&dim, sizeof(unsigned long), 1, fp)) == 1) {
+    GET_TIME(start);
     // calcular fatia da thread
     fatia = (dimension) dim / nthreads;
 
-    // ler valores dos vetores e salva-los
+    // ler valores dos vetores e salva-os
     float A[dim], B[dim]; // vetores de dados
     ler_vetor(A, dim, fp); ler_vetor(B, dim, fp);
 
@@ -107,9 +112,11 @@ int main(int argc, char *argv[]) {
       fprintf(stderr, "TESTE %d FALHOU - RESULTADO TESTE %f - RESULTADO OBTIDO %f\n", id_teste, resultado_teste, soma);
       qtde_testes_falhos++;
     }
-    // else {
-    //   fprintf(stderr, "TESTE BEM SUCEDIDO\n");
-    // }
+    // Registrar o tempo
+    GET_TIME(finish);
+    elapsed = finish - start;
+    erro_relativo = fabs((resultado_teste - soma) / resultado_teste);
+    fprintf(stdout, "TEMPO TESTE %d: %f - ERRO RELATIVO: %f\n", id_teste, elapsed, erro_relativo);
     // preparar para o próximo caso de teste
     soma = 0; id_teste++;
   }

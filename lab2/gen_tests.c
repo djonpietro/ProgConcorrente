@@ -15,7 +15,8 @@ void save_vet(float *vet, unsigned long dim, FILE *fp) {
 }
 
 void create_test(FILE *fp) {
-  unsigned long dim = 1 + ((float)rand() / RAND_MAX) * (MAX_DIM-1); // dimensao do vetor
+  // randomizar a dimensão do vetor
+  unsigned long dim = 1 + ((float)rand() / RAND_MAX) * (MAX_DIM-1);
   size_t c;
 
   // Escrever a dimensao dim no arquivo
@@ -23,6 +24,8 @@ void create_test(FILE *fp) {
     fprintf(stderr, "ERRO - FALHA AO ESCREVER DIMENSAO NO ARQUIVO\n");
     exit(1);
   }
+
+  fprintf(stdout, "Dim: %lu\n", dim);
 
   float A[dim], B[dim];
   double s = 0;
