@@ -34,15 +34,13 @@ void *ExecutaTarefa (void *arg) {
 //funcao executada pela thread de log
 void *extra (void *args) {
   int *p_nthreads = (int *) args;
-  long last = -1,
-       soma_max = LOOP_LEN * *p_nthreads;
+  long soma_max = LOOP_LEN * *p_nthreads;
 
   printf("Extra : esta executando...\n");
   while (1) {
     pthread_mutex_lock(&mutex);
-    if (!(soma%DIV) && last != soma) { //imprime se 'soma' for multiplo de 1000
+    if (flag_imprima) { //imprime se 'soma' for multiplo de 1000
         printf("soma = %ld \n", soma);
-        last = soma;
         flag_imprima = 0;
         pthread_cond_broadcast(&cond);
     }
