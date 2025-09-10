@@ -9,7 +9,6 @@ long int soma = 0; //variavel compartilhada entre as threads
 pthread_cond_t cond;
 pthread_mutex_t mutex; //variavel de lock para exclusao mutua
 int flag_imprima = 1;
-int flag_seguir = 0;
 
 //funcao executada pelas threads
 void *ExecutaTarefa (void *arg) {
@@ -21,7 +20,6 @@ void *ExecutaTarefa (void *arg) {
     pthread_mutex_lock(&mutex);
     while (flag_imprima) {
         pthread_cond_wait(&cond, &mutex);
-        if (!flag_imprima) break;
     }
     soma++;
     if (soma % DIV == 0) flag_imprima = 1;
